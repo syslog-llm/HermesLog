@@ -256,8 +256,10 @@ def truncate_log(log: str, max_len: int = DEFAULT_MAX_LOG_LEN):
 
 def add_evidence_ids(log: str) -> str:
     """
+    Dataset2/ZTE event delimiter is "##".
+
     Convert:
-        event A###event B###event C
+        event A##event B##event C
 
     into:
         #1 event A
@@ -266,7 +268,7 @@ def add_evidence_ids(log: str) -> str:
     """
     events = [
         item.strip()
-        for item in log.split("###")
+        for item in log.split("##")
         if item.strip()
     ]
 
@@ -1534,11 +1536,11 @@ def build_dataset2_crc_input(
         # Keep the COMPLETE original log for CRC.
         raw_content = source_record["content"]
 
-        # The current CRC extract_log() searches specifically for:
-        #     content: ... categories:
+        # The dataset2/ZTE CRC extract_log() searches specifically for:
+        #     The operation error log is: ... categories:
         user_content = (
-            "Input the contents of the operation fault log is:\n"
-            f"content: {raw_content}\n"
+            "The operation error log is:\n"
+            f"{raw_content}\n"
             f"categories: {taxonomy_text}"
         )
 
