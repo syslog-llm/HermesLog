@@ -19,8 +19,6 @@ import logging
 import warnings
 warnings.filterwarnings("ignore")
 
-# 兼容性补丁：transformers>=4.50 将 LossKwargs 改名为 TransformersKwargs，
-# 但 Phi-4-mini 的远程代码(modeling_phi3.py)仍 import 旧名，这里补一个别名。
 from transformers import utils as _hf_utils
 if not hasattr(_hf_utils, "LossKwargs"):
     _hf_utils.LossKwargs = _hf_utils.TransformersKwargs
@@ -54,11 +52,11 @@ output_dir = args.output_dir
 max_grad_norm = args.max_grad_norm
 
 if model_type == 1:
-    student_model_path = "/home/quezijing/qzj/edgeLogLM/Models/gemma-3-4b-it"
+    student_model_path = "./Models/gemma-3-4b-it"
 elif model_type == 2:
-    student_model_path = "/home/quezijing/qzj/edgeLogLM/Models/Phi-4-mini-Instruct"
+    student_model_path = "./Models/Phi-4-mini-Instruct"
 elif model_type == 3:
-    student_model_path = "/home/quezijing/qzj/edgeLogLM/Models/Qwen2.5-3"
+    student_model_path = "./Models/Qwen2.5-3"
 
 train_data_path = f"{base_path}/part{part_num}.json"
 save_path = f"./data/output/{dataset}/{output_dir}_part_{part_num}_{model_type}slm_{epoch}epoch_{lr}lr_{lora_r}r_{lora_alpha}alpha_{lora_dropout}dropout"
@@ -66,9 +64,6 @@ save_path = f"./data/output/{dataset}/{output_dir}_part_{part_num}_{model_type}s
 def load_dataset(data_path, tokenizer):
     json_loader = JsonToDataFrame(data_path)
     df = json_loader.load_json_to_dataframe()
-    # DemoV2 等新数据带有 crc_* / conversion_* 等嵌套或冗余列，
-    # pyarrow 无法为其中的 list/dict 推断统一类型，这里直接丢弃，
-    # 只保留蒸馏所需的标量字段（caseid/part/label/user_content/assistant_content）。
     extra_cols = ["crc_feature", "crc_reasoning", "crc_label",
                   "conversion_reason_source", "conversion_label_source",
                   "canonical_structure_ok", "parsed_ok"]
