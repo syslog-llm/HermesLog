@@ -71,35 +71,9 @@ model = LLM(
 tokenizer = AutoTokenizer.from_pretrained(peft_model_dir)
 sampling_params = SamplingParams(temperature=TEMPERATURE, top_p=TOP_P, max_tokens=1024)
 
-# def batch_getLogErrorID(logs_batch, tokenizer, max_len=1024*3):
-#     batch_token_ids = []
-#     batch_messages = []
-#     sys_prompt = f'''
-#     You will work as a text classification model to classify the operation error logs from the system to the defined categories.
-#     The categories are: \n{", ".join(label2details.values())}
-#     '''.strip()
-
-#     for log in logs_batch:
-#         user_prompt = f"""
-#         The operation error log to analysis now is: {log}\n
-#         You are now acting as a human labeler, please classify the error type of the log.
-#         Choose from: {", ".join(label2details.values())}.
-#         Please directly provide the error type only.
-#         """.strip()
-
-#         messages = [
-#             {"role": "system", "content": sys_prompt},
-#             {"role": "user", "content": user_prompt}
-#         ]
-#         batch_messages.append(messages)
-#         token_ids = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True)
-#         batch_token_ids.append(token_ids[-max_len:])
-#     return batch_token_ids, batch_messages
-
 def batch_getLogErrorID(logs_batch, tokenizer, max_len=1024*3):
     batch_token_ids = []
     batch_messages = []
-
     sys_prompt = f'''
     You will work as a text classification model to classify the operation error logs from the system to the defined categories.
     The categories are: \n{", ".join(label2details.values())}
@@ -108,27 +82,20 @@ def batch_getLogErrorID(logs_batch, tokenizer, max_len=1024*3):
     for log in logs_batch:
         user_prompt = f"""
         The operation error log to analysis now is: {log}\n
-        Possible error types are: {", ".join(label2details.values())}.
-        Please classify the error type of the log.
-        Please provide the error type only.
+        You are now acting as a human labeler, please classify the error type of the log.
+        Choose from: {", ".join(label2details.values())}.
+        Please directly provide the error type only.
         """.strip()
 
         messages = [
             {"role": "system", "content": sys_prompt},
             {"role": "user", "content": user_prompt}
         ]
-
         batch_messages.append(messages)
-
-        token_ids = tokenizer.apply_chat_template(
-            messages,
-            tokenize=True,
-            add_generation_prompt=True
-        )
-
+        token_ids = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True)
         batch_token_ids.append(token_ids[-max_len:])
-
     return batch_token_ids, batch_messages
+
 
 def batch_getLogAnalysis(round1_messages_batch, labels_batch, logs_batch, tokenizer, max_len=1024*3):
     batch_token_ids = []
