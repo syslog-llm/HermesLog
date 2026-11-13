@@ -53,32 +53,40 @@ To prevent temporal data leakage, fault cases are partitioned chronologically in
 
 ## ⚙️ Installation
 
-### Hardware & System Requirements
-* **OS**: Ubuntu 20.04 / 22.04 LTS
-* **Python**: `3.8`
-* **GPU**: NVIDIA A6000 (48GB) or commodity GPUs with $\ge 16\text{GB}$ VRAM (Peak VRAM usage is ~14.1 GB for offline Mistral-7B compilation and 9.2–14.0 GB for edge SLMs).
+**Requirements**
 
-### Environment Setup
+- Python 3.8
+- NVIDIA GPU for the local MLM and SLMs (our experiments use NVIDIA A6000; peak memory is about 14 GB for Mistral-7B and 9 to 14 GB for the SLMs)
+- API access to GPT-4o (and optionally Claude 3.5 Sonnet)
+
+**Setup**
+
 ```bash
-# Clone the repository
 git clone https://github.com/syslog-llm/HermesLog.git
 cd HermesLog
 
-# Create and activate conda environment
 conda create -n hermeslog python=3.8 -y
 conda activate hermeslog
-
-# Install dependencies
 pip install -r requirements/requirements.txt
 ```
 
-### Model Weights & API Configuration
-1. **Cloud LLMs**: Export your API keys for `gpt-4o-2024-05-13` or `claude-3-5-sonnet-20241022`:
-   ```bash
-   export OPENAI_API_KEY="your_openai_api_key"
-   export ANTHROPIC_API_KEY="your_anthropic_api_key"
-   ```
-2. **Local MLM & SLMs**: Download open-source weights from Hugging Face (`Mistral-7B-Instruct`, `google/gemma-3-4b-it`, `microsoft/Phi-4-mini-instruct`, `Qwen/Qwen2.5-3B-Instruct`) and update the local model paths in `config_stage2.py`.
+**Models**
+
+| Role | Model | Access |
+| :--- | :--- | :--- |
+| Cloud LLM (default) | GPT-4o | Official API |
+| Cloud LLM (alternative) | Claude 3.5 Sonnet  | Official API |
+| MLM | Mistral-7B | Open-source weights from Hugging Face |
+| Edge SLMs | Gemma3-4b-it, Phi4-mini-3.8b, Qwen2.5-3b | Open-source weights from Hugging Face |
+
+Set your API keys before running the cloud stage:
+
+```bash
+export OPENAI_API_KEY="your_key"
+export ANTHROPIC_API_KEY="your_key"   # only for the Claude backbone
+```
+
+> The two API snapshots above have been retired by their providers. To rerun the cloud stage, replace them with a currently available snapshot; results may differ slightly from those reported in the paper.
 
 ---
 
