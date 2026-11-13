@@ -96,7 +96,7 @@ All scripts are located in `code/`. Following the architecture in the paper, the
 | Stage | Script | Model Role | Paper Module & Description |
 | :--- | :--- | :--- | :--- |
 | **Stage 1** | `stage1_LLM_FOLFR_dataset{1,2}.py` | Cloud LLM (GPT-4o / Claude 3.5 Sonnet) | **FOLFR**: Four-stage zero-shot long-CoT reasoning and self-filtering ($\theta$) |
-| **Stage 2** | `stage2_MLM_CRC_dataset{1,2}.py` | Frozen MLM (Mistral-7B) | **CRC-SCR**: Cognitive Relay Compilation into structured triples $\langle\mathcal{F}, \mathcal{S}, L\rangle$ |
+| **Stage 2** | `stage2_MLM_CRC—SCR_dataset{1,2}.py` | Frozen MLM (Mistral-7B) | **CRC-SCR**: Cognitive Relay Compilation into structured triples $\langle\mathcal{F}, \mathcal{S}, L\rangle$ |
 | **Stage 3** | `stage3_SLM_align-tuning.py` | Edge SLMs (Gemma3-4b / Phi4-mini / Qwen2.5-3b) | **Stepwise Layered Alignment**: Progressive alignment of $L$, $\mathcal{F}$, and $\mathcal{S}$ |
 | **Stage 4** | `stage4_SLM_diagnosis.py` | Aligned Edge SLMs | **Edge Fault Diagnosis**: Low-latency edge inference with short-CoT explanation |
 
