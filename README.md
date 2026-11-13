@@ -91,19 +91,19 @@ export ANTHROPIC_API_KEY="your_key"   # only for the Claude backbone
 ---
 ## 🚀 Core Code
 
-All scripts are located in `code/`. Following the architecture in the paper, the pipeline consists of four sequential stages (Stages 1–3 for offline cloud-to-edge compilation and alignment, and Stage 4 for online edge diagnosis) supported by two shared utility modules.
+All scripts are located in `code/`. Following the cloud–edge collaborative workflow in the paper, the implementation consists of five sequential stages (1 Cloud LLM script, 1 Frozen MLM script, and 3 Edge SLM scripts) supported by two shared utility modules:
 
-| Stage | Script | Model Role | Paper Module & Description |
+| Stage | Script | Model / Role | Paper Module & Description |
 | :--- | :--- | :--- | :--- |
-| **Stage&nbsp;1** | `stage1_LLM_FOLFR_dataset{1,2}.py` | Cloud LLM (GPT-4o / Claude 3.5 Sonnet) | **FOLFR**: Four-stage zero-shot long-CoT reasoning and self-filtering ($\theta$) |
-| **Stage&nbsp;2** | `stage2_MLM_CRC‑SCR_dataset{1,2}.py` | Frozen MLM (Mistral-7B) | **CRC-SCR**: Cognitive Relay Compilation into structured triples $\langle\mathcal{F}, \mathcal{S}, L\rangle$ |
-| **Stage&nbsp;3** | `stage3_SLM_align‑tuning.py` | Edge SLMs (Gemma3-4b / Phi4-mini / Qwen2.5-3b) | **Stepwise Layered Alignment**: Progressive alignment of $L$, $\mathcal{F}$, and $\mathcal{S}$ |
-| **Stage&nbsp;4** | `stage4_SLM_diagnosis.py` | Aligned Edge SLMs | **Edge Fault Diagnosis**: Low-latency edge inference with short-CoT explanation |
-
+| **Stage&nbsp;1** | `stage1_LLM_FOLFR.py` | Cloud LLM (GPT‑4o / Claude&nbsp;3.5&nbsp;Sonnet) | **FOLFR**: Four-stage zero-shot long-CoT reasoning and self-filtering ($\theta$) |
+| **Stage&nbsp;2** | `stage2_MLM_CRC‑SCR.py` | Frozen MLM (Mistral‑7B) | **CRC-SCR**: Cognitive Relay Compilation into structured triples $\langle\mathcal{F}, \mathcal{S}, L\rangle$ |
+| **Stage&nbsp;3** | `stage3_prepare_SLM_training_data_from_crc.py` | Data Conversion Utility | **Transfer Set Formatting**: Converts Stage&nbsp;2 compiled triples into SLM-ready training samples |
+| **Stage&nbsp;4** | `stage4_SLM_align‑tuning.py` | Edge SLMs (Gemma3‑4b / Phi4‑mini / Qwen2.5‑3b) | **Stepwise Layered Alignment**: Progressive alignment of $L$, $\mathcal{F}$, and $\mathcal{S}$ |
+| **Stage&nbsp;5** | `stage5_SLM_diagnosis.py` | Aligned Edge SLMs | **Edge Fault Diagnosis**: Low-latency edge inference with short-CoT explanation |
 
 **Shared Utilities:**
 * `load_data.py`: Data loading and preprocessing utilities for candidate pools and site partitions.
-* `Trainer.py`: Custom training loop and objective scheduling for Stage 3 stepwise layered alignment.
+* `Trainer.py`: Custom training loop and objective scheduling for Stage 4 stepwise layered alignment.
 
 ---
 
@@ -113,30 +113,51 @@ All scripts are located in `code/`. Following the architecture in the paper, the
 
 ```bash
 cd code
-python stage1_LLM_FOLFR_dataset1.py   # or stage1_LLM_FOLFR_dataset2.py
+python stage1_LLM_FOLFR.py
 ```
 Reads the unlabeled candidate pool (`60-unlabeled.json`), executes four-stage long-CoT reasoning (*Observation, Analysis, Inference, Aggregation*), and generates `"Reasoning V1"`. Samples with self-evaluated confidence above $\theta = 0.90$ are retained as `"Demo V1"`.
 
 **Stage 2: Cognitive Relay Compilation with Frozen MLM (CRC-SCR)**
 
 ```bash
-python stage2_MLM_CRC‑SCR_dataset1.py     # or stage2_MLM_CRC‑SCR_dataset2.py
+python stage2_MLM_CRC-SCR.py
 ```
-Uses `"Demo V1"` as in-context demonstrations to guide the frozen Mistral-7B model, compiling verbose `"Reasoning V1"` traces into compact structured representations $\langle\mathcal{F}, \mathcal{S}, L\rangle$ (`"Reasoning V2"`). High-quality compiled samples passing $\tau_{\text{mid}} = 0.90$ form the transfer set `"Demo V2"` and are routed back to their corresponding edge sites.
+Uses `"Demo V1"` as in-context demonstrations to guide the frozen Mistral-7B model, compiling verbose `"Reasoning V1"` traces into compact structured representations $\langle\mathcal{F}, \mathcal{S}, L\rangle$ (`"Reasoning V2"`). High-quality compiled samples passing $\tau_{\text{mid}} = 0.90$ form the high-confidence transfer set `"Demo V2"`.
 
-**Stage 3: Stepwise Layered Alignment of Edge SLMs**
+**Stage 3: Training Data Preparation for Edge SLMs**
 
 ```bash
-python stage3_SLM_align-tuning.py
+python stage3_prepare_SLM_training_data_from_crc.py
 ```
-Invokes `Trainer.py` to fine-tune each edge SLM on its site-specific `"Demo V2"` transfer set, progressively aligning the diagnostic label ($L$), key anomaly features ($\mathcal{F}$), and compressed reasoning chain ($\mathcal{S}$).
+Converts the compiled `"Demo V2"` triples $\langle\mathcal{F}, \mathcal{S}, L\rangle$ from Stage 2 into structured instruction-tuning formats directly consumable by the edge SLMs across sites.
 
-**Stage 4: Edge Fault Diagnosis**
+**Stage 4: Stepwise Layered Alignment of Edge SLMs**
 
 ```bash
-python stage4_SLM_diagnosis.py
+python stage4_SLM_align-tuning.py
 ```
-Evaluates each aligned edge SLM on its respective site test partition (e.g., `test1666_part_{1,2,3}.json` for Dataset 1), outputting the predicted fault label alongside a concise short-CoT explanation.
+Invokes `Trainer.py` to fine-tune each edge SLM on its site-specific formatted transfer set, progressively aligning the diagnostic label ($L$), key anomaly features ($\mathcal{F}$), and compressed reasoning chain ($\mathcal{S}$).
+
+**Stage 5: Edge Fault Diagnosis**
+
+```bash
+python stage5_SLM_diagnosis.py
+```
+Evaluates each aligned edge SLM on its respective site test partition, outputting the predicted fault label alongside a concise short-CoT explanation.
+
+---
+
+### Default Hyperparameters
+
+| Parameter | Default Value |
+| :--- | :--- |
+| Cloud LLM confidence gate ($\theta$) | 0.90 |
+| MLM compilation filtering threshold ($\tau_{\text{mid}}$) | 0.90 |
+| Maximum short-CoT step length ($n_{\max}$) | 3 |
+| Learning rate | 2e-5 |
+| Epochs / Batch size | 20 / 16 |
+| Decoding temperature | 0.6 (Dataset 1), 0.8 (Dataset 2) |
+| Top-$p$ | 0.8 |
 
 ---
 
@@ -148,36 +169,21 @@ Evaluates each aligned edge SLM on its respective site test partition (e.g., `te
 ```text
 HermesLog/
 ├── code/
-│   ├── Trainer.py                          # Training utilities for SLM layered alignment
-│   ├── load_data.py                        # Data loading and partitioning utilities
-│   ├── stage1_LLM_FOLFR_dataset1.py        # Stage 1: Cloud LLM long-CoT reasoning (Dataset 1)
-│   ├── stage1_LLM_FOLFR_dataset2.py        # Stage 1: Cloud LLM long-CoT reasoning (Dataset 2)
-│   ├── stage2_MLM_CRC-SCR_dataset1.py          # Stage 2: Frozen MLM compilation into <F, S, L> (Dataset 1)
-│   ├── stage2_MLM_CRC-SCR_dataset2.py          # Stage 2: Frozen MLM compilation into <F, S, L> (Dataset 2)
-│   ├── stage3_SLM_align-tuning.py          # Stage 3: Stepwise layered alignment of edge SLMs
-│   └── stage4_SLM_diagnosis.py             # Stage 4: Edge fault diagnosis with short-CoT explanation
+│   ├── Trainer.py                                    # Training utilities for SLM layered alignment
+│   ├── load_data.py                                  # Data loading and partitioning utilities
+│   ├── stage1_LLM_FOLFR.py                           # Stage 1: Cloud LLM long-CoT reasoning (FOLFR)
+│   ├── stage2_MLM_CRC-SCR.py                         # Stage 2: Frozen MLM compilation into <F, S, L> (CRC-SCR)
+│   ├── stage3_prepare_SLM_training_data_from_crc.py  # Stage 3: Format conversion from CRC output to SLM training data
+│   ├── stage4_SLM_align-tuning.py                    # Stage 4: Stepwise layered alignment of edge SLMs
+│   └── stage5_SLM_diagnosis.py                       # Stage 5: Edge fault diagnosis with short-CoT explanation
 ├── data/
-│   ├── dataset1/                           # Server device logs (Alibaba Cloud)
-│   │   ├── 60-unlabeled.json               # Unlabeled candidate pool (60 cases)
-│   │   ├── 60-unlabeled_part_1.json        # Candidate cases from Edge Site 1 (20 cases)
-│   │   ├── 60-unlabeled_part_2.json        # Candidate cases from Edge Site 2 (20 cases)
-│   │   ├── 60-unlabeled_part_3.json        # Candidate cases from Edge Site 3 (20 cases)
-│   │   ├── output.json                     # Preprocessed log windows after session slicing
-│   │   ├── test1666.json                   # Full held-out test set (1,666 cases)
-│   │   ├── test1666_part_1.json            # Held-out test partition for Edge Site 1 (526 cases)
-│   │   ├── test1666_part_2.json            # Held-out test partition for Edge Site 2 (579 cases)
-│   │   ├── test1666_part_3.json            # Held-out test partition for Edge Site 3 (561 cases)
-│   │   └── test_case_id.txt                # Case IDs of the held-out test set
-│   └── dataset2/                           # Network device logs (ZTE), same layout as dataset1
-│       ├── 60-unlabeled.json               # Unlabeled candidate pool (60 cases)
-│       ├── 60-unlabeled_part_1.json        # Candidate cases from Edge Site 1 (20 cases)
-│       ├── 60-unlabeled_part_2.json        # Candidate cases from Edge Site 2 (20 cases)
-│       ├── 60-unlabeled_part_3.json        # Candidate cases from Edge Site 3 (20 cases)
-│       └── ...                             # Held-out test set (1,119 cases) and site partitions
+│   ├── dataset1/                                     # Server device logs (Alibaba Cloud): candidate pools & test partitions
+│   └── dataset2/                                     # Network device logs (ZTE): candidate pools & test partitions
 ├── requirements/
-│   └── requirements.txt                    # Python environment dependencies
+│   └── requirements.txt                              # Python environment dependencies
 └── README.md
 ```
+
 
 
 ## 🔗 Links
