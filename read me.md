@@ -1,3 +1,8 @@
+# HermesLog
+
+Official implementation of **"HermesLog: A Bridging Model Coordinated CoT Reasoning between LLMs and SLMs Collaborative Fault Diagnosis with Edge Autonomy"**.
+
+HermesLog is an unsupervised log-based fault diagnosis framework for 5G-enabled IIoT. It uses a frozen medium-sized language model (MLM) as a cognitive relay compiler to bridge cloud-based LLMs and edge-based SLMs, so that edge models inherit evidence-grounded reasoning and escalate only complex cases to the cloud.
 
 ## 🌟 Key Features
 
