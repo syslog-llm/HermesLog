@@ -120,7 +120,7 @@ Reads the unlabeled candidate pool (`60-unlabeled.json`), executes four-stage lo
 **Stage 2: Cognitive Relay Compilation with Frozen MLM (CRC-SCR)**
 
 ```bash
-python stage2_MLM_CRC_dataset1.py     # or stage2_MLM_CRC_dataset2.py
+python stage2_MLM_CRC_dataset1.py     # or stage2_MLM_CRC‑SCR_dataset2.py
 ```
 Uses `"Demo V1"` as in-context demonstrations to guide the frozen Mistral-7B model, compiling verbose `"Reasoning V1"` traces into compact structured representations $\langle\mathcal{F}, \mathcal{S}, L\rangle$ (`"Reasoning V2"`). High-quality compiled samples passing $\tau_{\text{mid}} = 0.90$ form the transfer set `"Demo V2"` and are routed back to their corresponding edge sites.
 
