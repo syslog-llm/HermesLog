@@ -185,3 +185,7 @@ training/SLM
 ├── Run_trainer_stage4.py                             # Stepwise layered curriculum trainer
 └── vllm_sample_offline-stage4.py                     # Held-out test set batch evaluation
 ```
+
+## 🔗 Links
+
+- Code: https://github.com/syslog-llm/HermesLog
