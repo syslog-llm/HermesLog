@@ -109,6 +109,65 @@ export ANTHROPIC_API_KEY="your_key"   # only for the Claude backbone
 > The two API snapshots above have been retired by their providers. To rerun the cloud stage, replace them with a currently available snapshot; results may differ slightly from those reported in the paper.
 
 ---
+## 🚀 Core Code
+
+All scripts are in `code/`. The pipeline has four stages: Stages 1 to 3 run offline, and Stage 4 performs edge diagnosis.
+
+| Stage | Script | Model | Paper module |
+| :--- | :--- | :--- | :--- |
+| 1 | `stage1_LLM_infer_dataset1.py`, `stage1_LLM_infer_dataset2.py` | GPT-4o / Claude 3.5 Sonnet | FOLFR: zero-shot long-CoT reasoning |
+| 2 | `stage2_MLM_CRC_dataset1.py`, `stage2_MLM_CRC_dataset2.py` | Mistral-7B (frozen) | CRC-SCR: Cognitive Relay Compilation |
+| 3 | `stage3_SLM_distill.py` | Gemma3-4b-it / Phi4-mini-3.8b / Qwen2.5-3b | Stepwise layered alignment |
+| 4 | `stage4_SLM_infer.py` | Aligned edge SLMs | Edge diagnosis with on-demand escalation |
+
+`load_data.py` and `Trainer.py` are shared utilities for data loading and SLM training.
+
+**Stage 1: Long-CoT reasoning with the cloud LLM**
+
+```bash
+cd code
+python stage1_LLM_infer_dataset1.py   # or stage1_LLM_infer_dataset2.py
+```
+
+Reads the candidate pool `60-unlabeled.json`, runs four-stage long-CoT reasoning (observation, analysis, inference, aggregation), and produces "Reasoning V1". Outputs with confidence above θ = 0.90 are kept as "Demo V1".
+
+**Stage 2: Cognitive Relay Compilation with the frozen MLM**
+
+```bash
+python stage2_MLM_CRC_dataset1.py     # or stage2_MLM_CRC_dataset2.py
+```
+
+Uses "Demo V1" as few-shot demonstrations and compiles each "Reasoning V1" into the compact representation ⟨F, S, L⟩ ("Reasoning V2"). Samples that pass the filtering threshold τ_mid form the transfer set "Demo V2". Mistral-7B only performs inference at this stage.
+
+**Stage 3: Stepwise layered alignment of the edge SLMs**
+
+```bash
+python stage3_SLM_distill.py
+```
+
+Trains each edge SLM on the "Demo V2" samples of its own site, progressively aligning the diagnosis label L, the key features F, and the short-CoT chain S.
+
+**Stage 4: Edge diagnosis**
+
+```bash
+python stage4_SLM_infer.py
+```
+
+Runs each aligned SLM on its site partition of the held-out test set (`test1666_part_{1,2,3}.json` for Dataset 1) and outputs the diagnosis label with a short-CoT explanation. Low-confidence cases are escalated to the cloud LLM.
+
+**Default settings**
+
+| Setting | Value |
+| :--- | :--- |
+| Demo V1 confidence threshold θ | 0.90 |
+| Transfer-set filtering threshold τ_mid | 0.90 |
+| Maximum short-CoT chain length n_max | 3 |
+| Learning rate | 2e-5 |
+| Epochs / batch size | 20 / 16 |
+| Decoding temperature | 0.6 (Dataset 1), 0.8 (Dataset 2) |
+| Top-p | 0.8 |
+---
+
 
 ## 💻 Icore code
 
