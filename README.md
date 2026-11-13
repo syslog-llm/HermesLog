@@ -1,113 +1,192 @@
 # HermesLog
 
-**HermesLog: A Cloud-Edge Collaborative Fault Diagnosis Framework**
+Official implementation of **"HermesLog: A Bridging Model Coordinated CoT Reasoning between LLMs and SLMs Collaborative Fault Diagnosis with Edge Autonomy"**.
 
-HermesLog is a novel cloud-edge collaborative diagnosis framework. It introduces a medium-sized language model (MLM, Mistral-7B) as a cognitive relay to enable efficient collaboration between ultra-large language models (LLMs, e.g., GPT-4o and Claude 3.5 sonnet) in the cloud and small language models (SLMs, e.g., Gemma3-4b-it, Phi4mini-3.8b, and Qwen2.5-3b) at the edge. The framework leverages cloud-based LLMs for deep reasoning on complex faults, while the MLM compresses long reasoning chains into compact knowledge representations. Through a progressive layer-wise alignment mechanism, these representations are then transferred to edge-based SLMs. This three-tier architecture ensures diagnostic interpretability while significantly reducing computational overhead and inference latency on edge devices. It enables real-time autonomous diagnosis at the edge, with only uncertain cases escalated to the cloud for deeper analysis. Ultimately, HermesLog maintains high diagnostic accuracy with verifiable explanations while substantially reducing dependency on cloud resources.
+HermesLog is an unsupervised log-based fault diagnosis framework for 5G-enabled IIoT. It uses a frozen medium-sized language model (MLM) as a cognitive relay compiler to bridge cloud-based LLMs and edge-based SLMs, so that edge models inherit evidence-grounded reasoning and escalate only complex cases to the cloud.
 
-## 🔍 Key Features
-- **Fault-Oriented Log Filtering and Reasoning (FOLFR)**:
-This module extracts diverse fault cases from edge logs via two components. The clustering module groups semantically similar logs using DBSCAN and selects representative samples to form compact sequences, which are then partitioned into cohesive cases based on temporal gaps. For fault identification, the cloud model performs four-stage AutoCoT-Reasoning on suspicious cases to extract evidence-bound clues, followed by reasoning-driven label generation that produces transparent diagnostic results.
+## ✨ Key Features
 
-- **CRC-Driven Stepwise Layering for Aligned CoT-Reasoning Log Explanation （CRC-DSL）**:
-This mechanism enables knowledge transfer from cloud to edge through progressive alignment. The cloud-based LLM first filters high-confidence samples to build a demonstration set. A MLM then compresses long reasoning chains into compact triplet representations. SLMs learn through three alignment stages—label, feature, and reasoning chain—using curriculum learning. After alignment, they achieve autonomous diagnosis, performing real-time screening locally with traceable explanations while escalating uncertain cases to the cloud.
+- **Fully unsupervised**: no manual annotation is required at any stage. Demonstrations and training targets are bootstrapped from unlabeled logs.
+- **Reason-then-diagnose**: the cloud LLM completes four-stage long-CoT reasoning (observation, analysis, inference, aggregation) before it emits a diagnosis label, which is designed to mitigate post-hoc rationalization and hallucinations.
+- **Frozen MLM as a bridge**: Mistral-7B condenses long-CoT reasoning into a three-element compact representation ⟨F, S, L⟩ without any parameter update or fine-tuning.
+- **Evidence-bound explanations**: every reasoning step must cite log line ids from the source case window, so each diagnosis is traceable.
+- **Edge autonomy with on-demand escalation**: aligned SLMs resolve most cases locally. Only 3.60% (Dataset 1) and 5.36% (Dataset 2) of held-out cases are escalated to the cloud LLM.
+- **Backbone adaptability**: the same pipeline runs with two cloud LLMs (GPT-4o, Claude 3.5 Sonnet) and three edge SLMs (Gemma3-4b-it, Phi4-mini-3.8b, Qwen2.5-3b) without changing prompts, thresholds, or training configuration.
 
+## 🧩 Key Components
 
-## 😖Key Components
-- **Cloud-Edge Collaborationn**: LLM in the cloud for complex reasoning and SLM at the edge for real-time autonomous diagnosis.
-- **Four-Stage AutoCoT-Reasoning Process for the Cloud-based LLM**: Four-stage AutoCoT-Reasoning ensures transparent, verifiable fault diagnosis with explicit evidence binding.
-- **Stepwise Layered Alignment for the Edge-based SLMs**: MLM bridging enables efficient transfer of complex reasoning capabilities from large to small models.
-- **Explainability Edge Autonomy**: SLMs generate compact explanations with traceable evidence, supporting trustworthy decision-making at the edge.
-- **Cost Efficiency**: Reduces cloud dependency and inference latency while maintaining high diagnostic accuracy.
-  
-## 📄 Dataset Description
-### This study evaluates two datasets:
-  - **The available dataset 1:** link at https://tianchi.aliyun.com/competition/entrance/531947/information.  
-  - **The available dataset 2:** link at https://github.com/SycIsDD/LogKG.
+| Component | Model | Location | Role |
+| :--- | :--- | :--- | :--- |
+| Clustering-driven diverse case extraction | – | Edge | Content-guided DBSCAN clustering and gap-based session slicing turn raw logs into compact case windows |
+| FOLFR (Fault-Oriented Log Filtering and Reasoning) | GPT-4o / Claude 3.5 Sonnet | Cloud | Zero-shot CoT prompting with two rounds of dialogue produces long-CoT "Reasoning V1"; outputs with confidence above θ = 0.9 are kept as "Demo V1" |
+| CRC-SCR (CRC-Condensed Short-CoT Reasoning) | Mistral-7B (frozen) | Cloud, offline | Few-shot CoT prompting compiles "Reasoning V1" into ⟨F, S, L⟩ ("Reasoning V2"); samples whose rubric-guided filtering score exceeds τ_mid form "Demo V2" |
+| Stepwise-aligned autonomous diagnosis | Gemma3-4b-it / Phi4-mini-3.8b / Qwen2.5-3b | Edge | Stepwise layered alignment over the label L, key features F, and short-CoT chain S, followed by online diagnosis with conditional escalation |
 
-### Data storage and load:
-  **Our dataset selected a total of 60 cases for cloud-based inference and fine-tuning, and these were randomly and evenly divided into three parts, which were then distributed to three edges.**
+The compact representation ⟨F, S, L⟩ contains:
 
-## 🪗 Icore code 
+- **F (key features)**: maximum severity, explicit error keywords, and the critical time interval.
+- **S (short-CoT reasoning chain)**: at most `n_max = 3` evidence-linked steps.
+- **L (diagnosis label)**: `Normal` or `Faulty`, plus a fault type from the dataset taxonomy.
 
-1. **Prompt inference and fine-tuning in the cloud**   
+## 📊 Dataset Description
+
+HermesLog is evaluated on two real-world system log datasets collected from production infrastructures that underpin IIoT services.
+
+- **Dataset 1 (server devices)**: system event logs generated by production servers of Alibaba Cloud, recorded over four weeks, with 3 fault types. It is available from the [Tianchi platform](https://tianchi.aliyun.com/competition/entrance/531947/information).
+- **Dataset 2 (network devices)**: logs from ZTE Corporation's switches and routers deployed in a 5G network serving IIoT applications, collected over 24 days and annotated with 9 fault types. It is released in [`data/dataset2`](https://github.com/syslog-llm/HermesLog/tree/main/data/dataset2).
+
+Raw log entries are grouped into independent fault cases through clustering and gap-based session slicing. The cases are then partitioned chronologically into an unlabeled candidate pool, a validation set, and a held-out test set, which prevents leakage from future logs into offline training.
+
+| Dataset | Retained entries | Fault types | Cases | Candidate | Demo V1 | Demo V2 | Validation | Test | Per SLM (candidate / training) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| Dataset 1 | 35,781 | 3 | 1,786 | 60 | 54 | 48 | 60 | 1,666 | 20 / 16 |
+| Dataset 2 | 59,592 | 9 | 1,239 | 60 | 48 | 36 | 60 | 1,119 | 20 / 12 |
+
+Notes:
+
+- **Retained entries** are the log entries kept after clustering and gap-based session slicing.
+- **Candidate, Demo V1, and Demo V2 are nested**, not disjoint. Each of the three edge sites uploads 20 candidate cases. Demo V1 keeps the candidates that pass LLM confidence filtering (θ = 0.90), and Demo V2 keeps the compiled samples that pass the MLM quality filtering.
+- Each Demo V2 sample is routed back to the edge site that uploaded it, giving 16 and 12 training samples per SLM on average.
+- The **validation set** is used only to select thresholds and decoding configurations.
+- The **held-out test set** is split into three disjoint site partitions: 526 / 579 / 561 cases on Dataset 1 and 354 / 375 / 390 cases on Dataset 2. Each edge SLM is evaluated on its own site partition, and each cloud LLM on the union.
+- Labels are used for evaluation only. The pipeline itself never reads them.
+
+## ⚙️ Installation
+
+**Requirements**
+
+- Python 3.8
+- NVIDIA GPU for the local MLM and SLMs (our experiments use NVIDIA A6000; peak memory is about 14 GB for Mistral-7B and 9 to 14 GB for the SLMs)
+- API access to GPT-4o (and optionally Claude 3.5 Sonnet)
+
+**Setup**
 
 ```bash
-claude_zeroshot-cot.py (LLM)
-mistral_pseudo-fewshot-cot.py (MLM)
+git clone https://github.com/syslog-llm/HermesLog.git
+cd HermesLog
+
+conda create -n hermeslog python=3.8 -y
+conda activate hermeslog
+pip install -r requirements/requirements.txt
 ```
 
-2. **Stepwise alignment training under cloud-edge collaboration**
-```bash(cloud)
-config.py
-vllm_sample_offline.py
-make_align.py
-run_train.py
+**Models**
+
+| Role | Model | Access |
+| :--- | :--- | :--- |
+| Cloud LLM (default) | GPT-4o (`gpt-4o-2024-05-13`) | Official API |
+| Cloud LLM (alternative) | Claude 3.5 Sonnet (`claude-3-5-sonnet-20241022`) | Official API |
+| MLM | Mistral-7B | Open-source weights from Hugging Face |
+| Edge SLMs | Gemma3-4b-it, Phi4-mini-3.8b, Qwen2.5-3b | Open-source weights from Hugging Face |
+
+Set your API keys before running the cloud stage:
+
+```bash
+export OPENAI_API_KEY="your_key"
+export ANTHROPIC_API_KEY="your_key"   # only for the Claude backbone
 ```
 
-```bash (edge)
-XXX.py
+> The two API snapshots above have been retired by their providers. To rerun the cloud stage, replace them with a currently available snapshot; results may differ slightly from those reported in the paper.
+
+## 🚀 Core Code
+
+The pipeline runs in four stages. Stages 1 to 3 are offline, and Stage 4 covers edge training and online diagnosis.
+
+**Stage 1: Long-CoT reasoning with the cloud LLM (FOLFR)**
+
+```bash
+cd code/Prompt-tuning/LLM-MLM
+python Gpt4o_zeroshot-cot_stage1.py
 ```
 
-## 📦 Installation
+Runs zero-shot four-stage long-CoT reasoning on the candidate cases and writes "Reasoning V1" and the diagnosis labels to `output_stage1/`.
 
+**Stage 2: Cognitive Relay Compilation with the frozen MLM (CRC-SCR)**
+
+```bash
+python Mistral_pseudo-fewshot-cot_stage2.py
 ```
-conda create --name <env> --file requirements.txt
+
+Uses high-confidence "Demo V1" samples as pseudo few-shot demonstrations and compiles each "Reasoning V1" into ⟨F, S, L⟩. Results are written to `output_stage2-pseudo-fewshot-cot/`. Mistral-7B only performs inference at this stage.
+
+**Stage 3: Building the transfer set for alignment**
+
+```bash
+cd ../../align-tuning/MLM-SLM
+python Mistral_vllm-sample-offline-tuning_stage2.py
+python make-align_stage3.py
+python Run-train_stage3.py
 ```
 
+Filters the compiled samples by the confidence-based filtering score and builds the transfer set ("Demo V2") used for stepwise layered alignment.
 
+**Stage 4: SLM alignment training and edge diagnosis**
 
+```bash
+cd ../../training/SLM
+python Run_trainer_stage4.py
+python SLM_vllm-zero-shot-cot-reason_stage4.py
+```
 
-## 🍥 Project Structure
+Trains each edge SLM progressively on the label, the key features, and the short-CoT chain, then runs diagnosis on the held-out test partition of its site.
+
+**Default settings**
+
+| Setting | Value |
+| :--- | :--- |
+| Demo V1 confidence threshold θ | 0.90 |
+| Transfer-set filtering threshold τ_mid | 0.90 |
+| Maximum short-CoT chain length n_max | 3 |
+| Learning rate | 2e-5 |
+| Epochs / batch size | 20 / 16 |
+| Decoding temperature | 0.6 (Dataset 1), 0.8 (Dataset 2) |
+| Top-p | 0.8 |
+
+## 📁 Project Structure
+
 ```
 HermesLog/
-├── code/               # Icore code 
-├── data/               # Input logs
-├── requirements/       # Create an environment
+├── code/               # Core code
+├── data/               # Input logs (dataset2: ZTE network device logs)
+├── requirements/       # Environment dependencies
 └── README.md           # Project description
 ```
 
-```  
-Prompt-tuning/LLM-MLM
-├── Gpt4o_zeroshot-cot_stage1.py
+```
+Prompt-tuning/LLM-MLM                       # Stages 1-2: LLM long-CoT reasoning and MLM compilation
+├── Gpt4o_zeroshot-cot_stage1.py            # Stage 1: zero-shot four-stage long-CoT reasoning (FOLFR)
 ├── data
-│   └── output.json
-├── Mistral_pseudo-fewshot-cot_stage2.py
-├── monitor_gpu.sh
-├── output_stage1
-│   ├── Gpt-4o.log
-│   └── Gpt-4o_results.json
-├── output_stage2-pseudo-fewshot-cot
-│   ├── mistral.log
-│   └── mistral_results.json
+│   └── output.json                         # Preprocessed case windows
+├── Mistral_pseudo-fewshot-cot_stage2.py    # Stage 2: few-shot CRC with the frozen Mistral-7B
+├── monitor_gpu.sh                          # GPU memory and energy monitoring
+├── output_stage1                           # Reasoning V1 / Demo V1
+│   ├── Gpt-4o.log
+│   └── Gpt-4o_results.json
+├── output_stage2-pseudo-fewshot-cot        # Reasoning V2 / Demo V2
+│   ├── mistral.log
+│   └── mistral_results.json
 ├── README.md
-├── test_case_id.txt
+├── test_case_id.txt                        # Case ids of the held-out test set
 └── tree.txt
 ```
 
 ```
-(base) ➜  dataset ls
-Gpt4o_zeroshot-cot.py                              output:config-stage1
-Mistral_pseudo-fewshot-cot-stage2.py               output:vllm_sample_offline-stage2
-monitor_gpu.sh                                     tree.txt
-output-stage2
+align-tuning/MLM-SLM                                # Stages 2-3: transfer-set construction
+├── config_stage2.py                                # Configuration of the compilation stage
+├── Mistral_vllm-sample-offline-tuning_stage2.py    # Offline batch compilation with vLLM (inference only)
+├── make-align_stage3.py                            # Build alignment samples <F, S, L>
+├── Run-train_stage3.py                             # Launch the alignment stage
+└── vllm-sample-offline.py                          # Offline vLLM sampling utility
 ```
 
-```  
-align-tuning/MLM-SLM
-├── config_stage2.py
-├── Mistral_vllm-sample-offline-tuning_stage2.py
-├── make-align_stage3.py                             output:make_align-stage3 
-├── Run-train_stage3.py                              output:run_train-stage3            
-└── vllm-sample-offline.py
 ```
-
-```  
-training/SLM
-├── SLM_load_stage4.py
-├── SLM_vllm-zero-shot-cot-reason_stage4.py
-├── Run_trainer_stage4.py  
-└── vllm_sample_offline-stage4.py
-```  
+training/SLM                                    # Stage 4: edge SLM training and diagnosis
+├── SLM_load_stage4.py                          # Load SLM weights
+├── SLM_vllm-zero-shot-cot-reason_stage4.py     # Edge diagnosis with short-CoT explanation
+├── Run_trainer_stage4.py                       # Stepwise layered alignment training
+└── vllm_sample_offline-stage4.py               # Offline vLLM sampling for evaluation
+```
 
 ## 🔗 Links
-- [Code]([https://github.com/IoT1220/HermesLog.git])
+
+- Code: https://github.com/syslog-llm/HermesLog
