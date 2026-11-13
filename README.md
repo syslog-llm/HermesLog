@@ -151,8 +151,8 @@ HermesLog/
 │   ├── load_data.py                        # Data loading and partitioning utilities
 │   ├── stage1_LLM_FOLFR_dataset1.py        # Stage 1: Cloud LLM long-CoT reasoning (Dataset 1)
 │   ├── stage1_LLM_FOLFR_dataset2.py        # Stage 1: Cloud LLM long-CoT reasoning (Dataset 2)
-│   ├── stage2_MLM_CRC_dataset1.py          # Stage 2: Frozen MLM compilation into <F, S, L> (Dataset 1)
-│   ├── stage2_MLM_CRC_dataset2.py          # Stage 2: Frozen MLM compilation into <F, S, L> (Dataset 2)
+│   ├── stage2_MLM_CRC-SCR_dataset1.py          # Stage 2: Frozen MLM compilation into <F, S, L> (Dataset 1)
+│   ├── stage2_MLM_CRC-SCR_dataset2.py          # Stage 2: Frozen MLM compilation into <F, S, L> (Dataset 2)
 │   ├── stage3_SLM_align-tuning.py          # Stage 3: Stepwise layered alignment of edge SLMs
 │   └── stage4_SLM_diagnosis.py             # Stage 4: Edge fault diagnosis with short-CoT explanation
 ├── data/
