@@ -74,8 +74,8 @@ pip install -r requirements/requirements.txt
 
 | Role | Model | Access |
 | :--- | :--- | :--- |
-| Cloud LLM (default) | GPT-4o (`gpt-4o-2024-05-13`) | Official API |
-| Cloud LLM (alternative) | Claude 3.5 Sonnet (`claude-3-5-sonnet-20241022`) | Official API |
+| Cloud LLM (default) | GPT-4o | Official API |
+| Cloud LLM (alternative) | Claude 3.5 Sonnet  | Official API |
 | MLM | Mistral-7B | Open-source weights from Hugging Face |
 | Edge SLMs | Gemma3-4b-it, Phi4-mini-3.8b, Qwen2.5-3b | Open-source weights from Hugging Face |
 
