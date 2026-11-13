@@ -48,8 +48,28 @@ To prevent temporal data leakage, fault cases are partitioned chronologically in
 
 * **Nested Demo Pool**: Each of the 3 edge sites uploads 20 unlabeled candidate cases (60 total). After LLM confidence filtering ($\theta = 0.90$), 54 and 48 cases are kept as `Demo V1`. Following MLM CRC compilation and filtering ($\gamma_{mid} > \tau_{mid}$), 48 and 36 samples are admitted into `Demo V2` and routed back to their originating sites (averaging 16 and 12 training samples per SLM on Dataset 1 and Dataset 2).
 * **Site-Isolated Evaluation**: The 60-case validation set is used strictly for selecting thresholds ($\tau_{mid}, \tau$) and decoding parameters. The held-out test set is divided into three disjoint edge-site partitions (**526 / 579 / 561** cases on Dataset 1; **354 / 375 / 390** cases on Dataset 2). During testing, model weights and demo pools remain frozen.
-
 ---
+
+**Data files**
+
+Both datasets follow the same layout under `data/`.
+
+| File | Content |
+| :--- | :--- |
+| `60-unlabeled.json` | Unlabeled candidate pool (60 cases) uploaded to the cloud LLM |
+| `60-unlabeled_part_{1,2,3}.json` | Candidate cases of the three edge sites (20 cases per site) |
+| `test1666.json` | Held-out test set of Dataset 1 (1,666 cases) |
+| `test1666_part_{1,2,3}.json` | Site partitions of the test set (526 / 579 / 561 cases), one per edge SLM |
+| `test_case_id.txt` | Case ids of the held-out test set |
+| `output.json` | Preprocessed case windows after clustering and session slicing |
+
+Notes:
+
+- **Candidate, Demo V1, and Demo V2 are nested**, not disjoint. Demo V1 keeps the candidates that pass LLM confidence filtering (θ = 0.90), and Demo V2 keeps the compiled samples that pass the MLM quality filtering.
+- Each Demo V2 sample is routed back to the edge site that uploaded it, giving 16 (Dataset 1) and 12 (Dataset 2) training samples per SLM on average.
+- Each edge SLM is evaluated on its own site partition, and each cloud LLM on the full test set. For Dataset 2, the test set has 1,119 cases split into 354 / 375 / 390.
+- Labels are used for evaluation only. The pipeline itself never reads them.
+
 
 ## ⚙️ Installation
 
