@@ -147,22 +147,6 @@ Evaluates each aligned edge SLM on its respective site test partition, outputtin
 
 ---
 
-### Default Hyperparameters
-
-| Parameter | Default Value |
-| :--- | :--- |
-| Cloud LLM confidence gate ($\theta$) | 0.90 |
-| MLM compilation filtering threshold ($\tau_{\text{mid}}$) | 0.90 |
-| Maximum short-CoT step length ($n_{\max}$) | 3 |
-| Learning rate | 2e-5 |
-| Epochs / Batch size | 20 / 16 |
-| Decoding temperature | 0.6 (Dataset 1), 0.8 (Dataset 2) |
-| Top-$p$ | 0.8 |
-
----
-
-
-
 
 ## 📁 Project Structure
 
