@@ -98,7 +98,7 @@ All scripts are located in `code/`. Following the cloud–edge collaborative wor
 | **Stage&nbsp;1** | `stage1_LLM_FOLFR.py` | Cloud LLM (GPT‑4o / Claude&nbsp;3.5&nbsp;Sonnet) | **FOLFR**: Four-stage zero-shot long-CoT reasoning and self-filtering ($\theta$) |
 | **Stage&nbsp;2** | `stage2_MLM_CRC‑SCR.py` | Frozen MLM (Mistral‑7B) | **CRC-SCR**: Cognitive Relay Compilation into structured triples $\langle\mathcal{F}, \mathcal{S}, L\rangle$ |
 | **Stage&nbsp;3** | `stage3_prepare_SLM_training_data_from_crc.py` | Data Conversion Utility | **Transfer Set Formatting**: Converts Stage&nbsp;2 compiled triples into SLM-ready training samples |
-| **Stage&nbsp;4** | `stage4_SLM_align‑tuning.py` | Edge SLMs (Gemma3‑4b / Phi4‑mini / Qwen2.5‑3b) | **Stepwise Layered Alignment**: Progressive alignment of $L$, $\mathcal{F}$, and $\mathcal{S}$ |
+| **Stage&nbsp;4** | `stage4_SLM_align‑tuning.py` | Edge SLMs (Gemma3‑4b / Phi4‑mini / Qwen2.5‑3b) | **Stepwise Layered Alignment**: Progressive alignment of $\mathcal{F}$, $\mathcal{S}$, and $L$ |
 | **Stage&nbsp;5** | `stage5_SLM_diagnosis.py` | Aligned Edge SLMs | **Edge Fault Diagnosis**: Low-latency edge inference with short-CoT explanation |
 
 **Shared Utilities:**
