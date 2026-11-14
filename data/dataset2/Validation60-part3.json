@@ -1,0 +1,122 @@
+[
+    {
+        "part": 3,
+        "caseid": 7,
+        "content": "FAN Speed malfunction!  Shelfnum =0 Fanid = 9 Fan Speed Error:pwm=2800,inlet=180,tInlet=4320,tInletDelta=432,outlet=180,tOutLet=3700,tOutLetDelta=400##Fancard malfunction!  shelfnum =0  Fanid =9 abnormal##Fancard malfunction!  shelfnum =0  Fanid =9 normal##FAN Speed malfunction!  Shelfnum =0 Fanid = 9 Fan Speed Error cancel!",
+        "label": "Fan Fault"
+    },
+    {
+        "part": 3,
+        "caseid": 1141,
+        "content": "LACP receive lacpdu time out.  The port(index = 8287, name = xgei-0/1/1/1) turns into EXPIRED##LACP interface active status.  The interface (index = 8287, name = xgei-0/1/1/1) turns into INACTIVE",
+        "label": "LACP Flapping (Link Aggregation Control Protocol)"
+    },
+    {
+        "part": 3,
+        "caseid": 582,
+        "content": "Port dampening  The physical interface xgei-0/0/0/5 flap cleared, damping time 10 seconds, up 1 times, down 0 times##Interface status.  The interface(index=8301,name='xgei-0/0/0/5') turned into protocol DOWN.##Physical interface status  The physical interface xgei-0/0/0/5 turned into UP##LOS (Loss of Signal)!  (xgei-0/0/0/5: detected loss of signal)##Port dampening  The physical interface xgei-0/0/0/5 turned into DAMPENING!##Interface layer2 status.  The interface(index=8301,name='xgei-0/0/0/5') layer2 status turned into protocol DOWN.##Receiving Optical Power(dBm) threshold crossed  (Interface:xgei-0/0/0/5,lane = NA) <50-description> 15min low alarm occur. Low thres is: -18.0100, current value is: -20.9690##LOS (Loss of Signal)!  (xgei-0/0/0/5: loss of signal cleared)##Physical interface status  The physical interface xgei-0/0/0/5 turned into DOWN##Interface status.  The interface(index=8301,name='xgei-0/0/0/5') turned into protocol UP.##Receiving Optical Power(dBm) threshold crossed  (Interface:xgei-0/0/0/5,lane = NA) <50-description> 15min low alarm disappear. Low thres is: -18.0100, current value is invalid##Interface layer2 status.  The interface(index=8301,name='xgei-0/0/0/5') layer2 status turned into protocol UP.",
+        "label": "Port Failure"
+    },
+    {
+        "part": 3,
+        "caseid": 70,
+        "content": "power abnormal  Shelfnum =0 groupid =1  powerid =2  Power malfunction alarm##Power output voltage error!  Shelfnum =0 groupid =1  powerid =2  The output voltage of the power abnormal(cur-out-volt:12)##power abnormal  Shelfnum =0 groupid =1  powerid =2  Power malfunction alarm resume##Power output voltage error!  Shelfnum =0 groupid =1  powerid =2  The output voltage of the power abnormal(cur-out-volt:11)##Power output voltage error!  Shelfnum =0 groupid =1  powerid =2  The output voltage of the power alarm resume(cur-out-volt:12)",
+        "label": "Power Supply Fault"
+    },
+    {
+        "part": 3,
+        "caseid": 75,
+        "content": "Power abnormal!  Shelfnum =0 groupid =1  powerid =PWRA4 Malfunction alarm##Power input under voltage!  Shelfnum =0 groupid =2  powerid =PWRB4 input under voltage abnormal alarm##Power abnormal!  Shelfnum =0 groupid =1  powerid =PWRA2 Malfunction alarm##Power work abnormal!  Shelfnum =0 groupid =2  powerid =PWRB2 work abnormal alarm##Power abnormal!  Shelfnum =0 groupid =1  powerid =PWRA2 Malfunction resume##Power abnormal!  Shelfnum =0 groupid =2  powerid =PWRB2 Malfunction resume##Power DropOff!  Shelfnum =0 groupid =2  powerid =PWRB2 DropOff resume##Power DropOff!  Shelfnum =0 groupid =2  powerid =PWRB4 DropOff resume##Power input under voltage!  Shelfnum =0 groupid =2  powerid =PWRB4 input under voltage abnormal resume##Power DropOff!  Shelfnum =0 groupid =1  powerid =PWRA2 DropOff resume##Power DropOff!  Shelfnum =0 groupid =2  powerid =PWRB2 DropOff alarm##Power input under voltage!  Shelfnum =0 groupid =1  powerid =PWRA2 input under voltage abnormal resume##Power work abnormal!  Shelfnum =0 groupid =1  powerid =PWRA4 work abnormal alarm##Power work abnormal!  Shelfnum =0 groupid =1  powerid =PWRA2 work abnormal resume##Power input under voltage!  Shelfnum =0 groupid =1  powerid =PWRA4 input under voltage abnormal resume##Power input abnormal!  Shelfnum =0 groupid =2  powerid =PWRB2 input abnormal resume##Power input under voltage!  Shelfnum =0 groupid =2  powerid =PWRB2 input under voltage abnormal resume##Power DropOff!  Shelfnum =0 groupid =2  powerid =PWRB4 DropOff alarm##Power input abnormal!  Shelfnum =0 groupid =2  powerid =PWRB2 input abnormal alarm##Power abnormal!  Shelfnum =0 groupid =1  powerid =PWRA4 Malfunction resume##Power work abnormal!  Shelfnum =0 groupid =1  powerid =PWRA4 work abnormal resume##Power work abnormal!  Shelfnum =0 groupid =1  powerid =PWRA2 work abnormal alarm##Power abnormal!  Shelfnum =0 groupid =2  powerid =PWRB4 Malfunction resume##Power abnormal!  Shelfnum =0 groupid =2  powerid =PWRB2 Malfunction alarm##Power input under voltage!  Shelfnum =0 groupid =2  powerid =PWRB2 input under voltage abnormal alarm##Power work abnormal!  Shelfnum =0 groupid =2  powerid =PWRB4 work abnormal resume##Power input under voltage!  Shelfnum =0 groupid =1  powerid =PWRA2 input under voltage abnormal alarm##Power work abnormal!  Shelfnum =0 groupid =2  powerid =PWRB4 work abnormal alarm##Power input under voltage!  Shelfnum =0 groupid =1  powerid =PWRA4 input under voltage abnormal alarm",
+        "label": "Power Supply Fault"
+    },
+    {
+        "part": 3,
+        "caseid": 231,
+        "content": "FAN Speed malfunction!  Shelfnum =0 Fanid = 9 Fan Speed Error:pwm=2800,inlet=180,tInlet=4320,tInletDelta=432,outlet=180,tOutLet=3700,tOutLetDelta=400##Fancard malfunction!  shelfnum =0  Fanid =9 abnormal##Fancard malfunction!  shelfnum =0  Fanid =9 normal##FAN Speed malfunction!  Shelfnum =0 Fanid = 9 Fan Speed Error cancel!",
+        "label": "Fan Fault"
+    },
+    {
+        "part": 3,
+        "caseid": 415,
+        "content": "Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/3/1/1,lane = 1) <240-description> 15min low alarm forecast disappear. Warn low thres is: 27.0000, current value is: 27.0117",
+        "label": "Optics Module Fault"
+    },
+    {
+        "part": 3,
+        "caseid": 476,
+        "content": "Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 3) <240-description> 15min low alarm disappear. Low thres is: 25.0000, current value is: 25.0000##Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 3) <240-description> 15min low alarm forecast occur. Warn low thres is: 27.0000, current value is: 25.0000##Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 1) <240-description> 15min low alarm occur. Low thres is: 25.0000, current value is: 24.9804##Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 3) <240-description> 15min low alarm forecast disappear. Warn low thres is: 27.0000, current value is: 24.9804##Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 2) <240-description> 15min low alarm forecast disappear. Warn low thres is: 27.0000, current value is: 24.9804##Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 4) <240-description> 15min low alarm forecast disappear. Warn low thres is: 27.0000, current value is: 24.9804##Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 2) <240-description> 15min low alarm forecast occur. Warn low thres is: 27.0000, current value is: 25.0000##Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 3) <240-description> 15min low alarm occur. Low thres is: 25.0000, current value is: 24.9804##Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 4) <240-description> 15min low alarm occur. Low thres is: 25.0000, current value is: 24.9804##Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 2) <240-description> 15min low alarm disappear. Low thres is: 25.0000, current value is: 25.0000##Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 1) <240-description> 15min low alarm forecast occur. Warn low thres is: 27.0000, current value is: 25.0000##Laser Temperature (celsius) threshold crossed  (Interface:cgei-0/2/1/1,lane = 2) <240-description> 15min low alarm occur. Low thres is: 25.0000, current value is: 24.9804",
+        "label": "Optics Module Fault"
+    },
+    {
+        "part": 3,
+        "caseid": 621,
+        "content": "SNMP entity authentication failure  (IP:2409:8086:8419:fb::311;Port:57069)##Interface status.  The interface(index=31,name='xgei-0/1/1/29') turned into protocol DOWN##Port down reason  Interface xgei-0/1/1/29 is down, due to Los##Interface layer2 status.  The interface(index=31,name='xgei-0/1/1/29') layer2 status turned into protocol UP##Interface layer2 status.  The interface(index=31,name='xgei-0/1/1/29') layer2 status turned into protocol DOWN##Interface status.  The interface(index=31,name='xgei-0/1/1/29') turned into protocol UP",
+        "label": "Port Failure"
+    },
+    {
+        "part": 3,
+        "caseid": 818,
+        "content": "Receiving CRC packets performance.  The interface(xgei-0/2/0/9) ingress FCSError total packet is 10(threshhold range from 0 to 10 per 10 seconds).##Receiving CRC packets performance.  The interface(xgei-0/2/0/9) ingress FCSError total packet is 20(threshhold range from 0 to 10 per 10 seconds).##SNMP entity authentication failure  (IP:2409:8086:8419:fb::311;Port:38840)",
+        "label": "CRC Error (Cyclic Redundancy Check)"
+    },
+    {
+        "part": 3,
+        "caseid": 872,
+        "content": "The MAC of the dynamic ND item changed.  (Old MAC = c85b.76fc.0a5d,new MAC = c85b.76e4.67cf,IPv6 Addr = 2409:8027:5a06:1419::20f:10f8,interface = vlan150).##Receiving CRC packets performance.  The interface(xgei-0/2/0/9) ingress FCSError total packet is 20(threshhold range from 0 to 10 per 10 seconds).",
+        "label": "CRC Error (Cyclic Redundancy Check)"
+    },
+    {
+        "part": 3,
+        "caseid": 922,
+        "content": "Port packet aged  Instance 0 port smartgroup68 received packet information aged##STP port instance state changed  Port smartgroup68 instance 0 state change discard->learn",
+        "label": "STP Fault (Spanning Tree Protocol)"
+    },
+    {
+        "part": 3,
+        "caseid": 923,
+        "content": "Port packet aged  Instance 0 port smartgroup13 received packet information aged##STP port instance state changed  Port smartgroup13 instance 0 state change discard->learn##STP port instance state changed  Port smartgroup13 instance 0 state change disabled->discard",
+        "label": "STP Fault (Spanning Tree Protocol)"
+    },
+    {
+        "part": 3,
+        "caseid": 1066,
+        "content": "SessionInfo :  [Session Up]Ld:17370/Rd:0,Protocol:INSTANCE,singleHop,IfName:irb239,VpnId:68,Local/Peer:2409:8027:5000:9:0:0:0:53FF/2409:8086:8419:2CCD:0:0:0:2,SessionName:zenic_bfd_945.##SessionInfo :  [Session Down For FTM_UP_DOWN]Ld:17429/Rd:0,Protocol:INSTANCE,singleHop,IfName:irb242,VpnId:68,Local/Peer:2409:8027:5000:9:0:0:0:53FF/2409:8086:8419:2CCF:0:0:0:9,SessionName:zenic_bfd_1004.",
+        "label": "BFD Down (Bidirectional Forwarding Detection)"
+    },
+    {
+        "part": 3,
+        "caseid": 1096,
+        "content": "SessionInfo :  [Session Up]Ld:18382/Rd:0,Protocol:INSTANCE,singleHop,IfName:irb718,VpnId:125,Local/Peer:2409:8027:5100:9:0:0:0:A1FE/2409:8086:8419:3C05:0:0:0:1,SessionName:zenic_bfd_2518.##SessionInfo :  [Session Down For FTM_UP_DOWN]Ld:18379/Rd:0,Protocol:INSTANCE,singleHop,IfName:irb717,VpnId:123,Local/Peer:2409:8027:5100:9:0:0:0:51FF/2409:8086:8419:3C04:0:0:0:2,SessionName:zenic_bfd_2515.",
+        "label": "BFD Down (Bidirectional Forwarding Detection)"
+    },
+    {
+        "part": 3,
+        "caseid": 1189,
+        "content": "The actor information carried in the received PDU changed.  (index = 8344, name =xgeiw-0/1/0/2, field ='actor_state', pkt_value =0x3, local_value=0x3f)##LACP current status changed.  Smartgroup(group id = 3) NON-PROTECT status disappear##LACP current status changed.  Smartgroup(group id = 3) turns into NON-PROTECT status##LACP interface active status.  The interface (index = 8344, name = xgeiw-0/1/0/2) turns into INACTIVE##EXC(Excessive Bit Error Ratio) threshold crossed  xgeiw-0/1/0/2##LACP interface active status.  The interface (index = 8344, name = xgeiw-0/1/0/2) turns into ACTIVE##The physical interface  xgeiw-0/1/0/2 was UP after delay.1 times up and 1 times down.",
+        "label": "LACP Flapping (Link Aggregation Control Protocol)"
+    },
+    {
+        "part": 3,
+        "caseid": 1196,
+        "content": "LACP current status changed.  The interface smartgroup1 NON-PROTECT status disappear##LACP interface active status.  The interface (index = 57, name = cgei-0/1/1/55) turns into INACTIVE##LACP current status changed.  The interface smartgroup1 turns into NON-PROTECT status##The partner information carried in the received PDU changed.  (index = 57, name =cgei-0/1/1/55, field ='partner_system', pkt_value =0000.5960.2037, local_value=fc44.9f60.448c)##LACP interface active status.  The interface (index = 57, name = cgei-0/1/1/55) turns into ACTIVE",
+        "label": "LACP Flapping (Link Aggregation Control Protocol)"
+    },
+    {
+        "part": 3,
+        "caseid": 1201,
+        "content": "LACP interface active status.  The interface (index = 8763, name = xgei-0/4/0/1) turns into INACTIVE##Interface layer2 status.  The interface(index=8293,name='spi-0/4/0/1') layer2 status turned into DELETED",
+        "label": "LACP Flapping (Link Aggregation Control Protocol)"
+    },
+    {
+        "part": 3,
+        "caseid": 1232,
+        "content": "Interface state changed.  Intf smartgroup9.3802 in OSPFv3 process 40, POINT_TO_POINT->DOWN. (Process:40;AreaId:0.0.0.0;IfName:smartgroup9.3802)",
+        "label": "OSPF Neighbor Flapping (Open Shortest Path First)"
+    },
+    {
+        "part": 3,
+        "caseid": 1234,
+        "content": "Neighbor state changed.  Nbr 192.168.5.133 on intf smartgroup7.3465 in OSPFv3 process 712, FULL->DOWN. (AreaId:0.0.0.0;Reason:DeadTimerExpire)##Neighbor state changed.  (NeighborID:192.168.5.133;Interface:smartgroup7.3465;State:Full->Down;ProcessId:712;AreaId:0.0.0.0;Reason:DeadTimerExpire).",
+        "label": "OSPF Neighbor Flapping (Open Shortest Path First)"
+    }
+]
